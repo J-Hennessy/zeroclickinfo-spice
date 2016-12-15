@@ -9,10 +9,12 @@ spice proxy_cache_valid => '200 1d'; # defaults to this automatically
 
 spice wrap_jsonp_callback => 0;
 
-spice from => '(.*)/(.*)';
-spice to => 'http://eval.repl.it/eval';
-
+spice from => '([^/]+)(?:/(.*))?';
+spice to => 'https://eval.repl.it/eval';
 spice post_body => 'language=$1&code=$2';
+spice headers => {
+    basic_auth => ['ddg','duckit']
+};
 
 triggers end => 'repl';
 
@@ -77,8 +79,8 @@ my %aliases = (
 handle remainder => sub {
 
     return unless $_;
-    return $_ if $_ ~~ @langs;
-    return $aliases{$_} if exists $aliases{$_};
+    return $_, "2+3" if $_ ~~ @langs;
+    return $aliases{$_}, "2+3" if exists $aliases{$_};
 };
 
 1;
